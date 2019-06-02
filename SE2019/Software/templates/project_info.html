@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load globalVarConvertor %}
+{% block title %}
+    <title> {{ project.name }} - 项目详情</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="container mt-5 py-5">
+  <div class="text-center">
+    <h2>{{ project.name }}</h2>
+    <p class="lead"></p>
+{#      {% if request.is_authenticated %}#}
+{#        {{ request.session.user_name }}#}
+{#      {% endif %}#}
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4 order-md-2 mb-4">
+      <div class="card mb-3">
+        <div class="card-header py-2">
+          {% if not request.session.is_login %}
+            <b>项目归属：</b>
+          {% elif request.session.uid != project.creator_id %}
+            <form method="post" class="inline">
+            <b>项目归属：</b>
+              {% if collected %}
+                <input id="collect-input" type="hidden" value="取消收藏" name="feature">
+                <button id="collect-button" class="btn btn-success">已收藏★</button>
+              {% else %}
+                <input id="collect-input" type="hidden" value="收藏" name="feature">
+                <button id="collect-button" class="btn btn-primary">收藏☆</button>
+              {% endif %}
+              {% csrf_token %}
+            </form>
+          {% else %}
+            <b>项目归属：</b>
+            <a class="btn btn-warning" href={% url 'ModifyProject' project.pid %}>修改项目</a>
+          {% endif %}
+        </div>
+        <div class="card-body px-2 py-2">
+          创建者：<a href={% url 'Space' project.creator.id %}>{{ project.creator.name }}</a>
+          {% if request.session.is_login and request.session.uid != project.creator_id %}
+{#          {% if request.user.is_authenticated and request.user.has_confirmed and request.user.identity == 1 %}#}
+            <a class="btn btn-sm btn-info ml-4" target="_blank" href={% url 'Msg' project.creator_id %}>和我聊聊</a>
+          {% endif %}
+          <br>创建时间：{{ project.time }}<br>
+        </div>
+        <div class="card-header py-2">
+          <b>项目领域：</b>
+        </div>
+        <div class="card-body px-2 py-2">
+          {% for area in area_of_project %}
+            <button type="button" class="btn btn-primary">{{ area }}</button>
+          {% endfor %}
+        </div>
+        <div class="card-header py-2">
+          <b>融资进展：</b>
+          <button type="button" class="btn btn-danger">{{ project.status|status2str }}</button>
+        </div>
+        <div class="card-header py-2">
+          <b>招聘情况：</b>
+          <button type="button" class="btn btn-info">{% if project.recruit %}招聘中{% else %}暂无招聘{% endif %}</button>
+        </div>
+        {% if project.proposal %}
+        <div class="card-header py-2">
+          <button class="btn btn-success">
+            <a href='/download/?filepath={{ project.proposal.file }}'
+               target="_blank" style="color: #FFFFFF;">查看商业策划书</a>
+          </button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-8 order-md-1">
+      <div class="row">
+        <div class="col-md-9 mb-3">
+          <label>公司名称</label>
+          <input disabled class="form-control btn-outline-dark"
+           value="{% if project.company_name %}{{ project.company_name }}{% else %}暂无公司{% endif %}">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label>地区</label>
+          <input disabled class="form-control btn-outline-dark"
+           value="{{ project.location }}">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label>项目简介</label>
+        <textarea disabled class="form-control btn-outline-dark" rows="2" style="resize: none">{{ project.introduction }}</textarea>
+      </div>
+      <div class="mb-3">
+        <label>详细介绍</label>
+        <textarea disabled class="form-control btn-outline-dark" rows="10" style="resize: none">{{ project.detailed_introduction }}</textarea>
+      </div>
+    </div>
+  </div>
+
+{% if recommend|length > 0 %}
+  <hr class="featurette-divider">
+  <h3>为您推荐</h3>
+  <div class="row mb-4">
+  {% for p in recommend %}
+    <div class="col-3 my-4">
+      <div class="card-header">
+        <h4>
+          <a href= {% url 'ProjectInfo'  p.pid %}>{{ p.name }}</a>
+        </h4>
+      </div>
+      <div class="card card-body px-2 py-1 h-100">
+        <p class="card-text">
+          {{p.detailed_introduction|recommend_cut:"140"}}
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  <hr class="featurette-divider" style="margin: 5rem 0;">
+{% endif %}
+</main>
+{% endblock %}
+
+{% block addJS %}
+<script src="../../static/js/project_info.js"></script>
+{% endblock %}

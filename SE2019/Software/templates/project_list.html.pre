@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load globalVarConvertor %}
+
+{% block title %}
+<title>项目一览</title>
+{% endblock %}
+
+{% block addCSS %}
+<link rel="stylesheet" href="../../static/css/project_list.css"/>
+<style>
+   .layui-body.mt-5{overflow:auto;}
+    .project-container{
+        min-height: 800px;
+        border: 1px solid #eee;
+        margin:auto;
+        width:1200px;
+	overflow:auto;
+        box-sizing: border-box;
+    }
+    .project-header{
+        padding: 20px;
+        border-bottom: 1px solid #e5e9ef;
+        font-size: 18px;
+        color: #222;
+        vertical-align: middle;
+        padding-bottom:10px;
+        box-sizing: border-box;
+    }
+    .project-count{
+        border:1px solid #ddd;
+        border-radius: 3px;
+        color: #777;
+        font-size: 12px;
+        line-height: 18px;
+        height: 20px;
+        margin-left: 11px;
+        padding: 0 5px;
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+    }
+    .project-section{
+        width: 100%;
+    	height:92%;
+	float:left;
+	position:relative;
+    }
+    .project-list{
+        padding: 0 0 20px 0;
+        float: left;
+        display: none;
+        width:100%;
+	overflow:auto;	
+    }
+    .project-list.active{
+        display: block;
+        
+    }
+    .list-item{
+        border: 1px solid rgba(0,0,0,.125);
+        display: inline-block;
+        border-radius: 4px;
+        margin: 19px;
+        padding: 20px;
+        float:left;
+	height:300px;
+        width:30%;
+        box-sizing: border-box;
+        box-shadow: 0 1px 1px 1px rgba(121, 146, 185, .54);
+	position:relative;
+    	clear:top;    
+    }
+    a.title{
+        text-decoration: none;
+        display: inline-block;
+        font-size: 22px;
+        margin-bottom: 10px; 
+        box-sizing: border-box;
+        cursor:pointer;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	width:100%; 
+        white-space: nowrap;
+    }
+    a.title:link,a.title:visited{
+        color:black;    
+    }
+    a.title:hover{
+        color:blue;
+        text-decoration: none;
+    }
+
+    .intro{
+        color: black;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        font-size:16px;
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .detailed-intro{
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+
+        font-size: 16px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        word-wrap: break-word;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+    .label-row{
+        display: block;
+        position: absolute;
+        bottom: 20px;
+	overflow:auto;
+	max-height:100px;
+    }
+    .label{
+        height: 38px;
+        text-align: center;
+        font-size: 12px;
+        vertical-align: middle;
+        border:1px solid black;
+        border-radius: 4px;
+        padding: 10px;
+        margin: 5px;
+        float: left;
+        box-sizing: border-box;
+        cursor:pointer; 
+    }
+    .label.area{
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .label.area:hover{
+        background: #0069d9;
+    }
+    .label.status{
+        background:#ffc107;
+        color: black;
+        border-color: #ffc107;
+    }
+    .label.status:hover{
+        background: #e0a800;
+    }
+</style>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+  <h5>凤巢创投平台当前共有项目{{paginator.count}}个，共{{ paginator.num_pages }}页。</h5>
+  {% for result in page.object_list %}
+    {% if forloop.counter0 == 0 or forloop.counter0 == 3 %}
+      <div class="row mb-4">{% endif %}
+  <div class="col-4">
+    <div class="card card-body px-2" style="height:100%!important">
+      <h4 class="card-title"><a href="../project_info/{{ result.pid }}">{{ result.name }}</a></h4>
+      <p class="card-text">
+        简介/标签：{{ result.introduction|recommend_cut:"140" }}
+        <br>{{ result.detailed_introduction|recommend_cut:"140" }}
+      </p>
+
+    <div class="col-12 px-0">
+      <button type="button" class="btn btn-warning inline mb-1">{{result.status|status2str}}</button>
+      {% for a in result.area|area2list %}
+        <button type="button" href="javascript:void(0);" class="btn btn-primary inline mb-1">{{a}}</button>
+      {% endfor %}
+    </div>
+    </div>
+  </div>
+  {% if forloop.counter0 == 2 or forloop.revcounter0 == 0 %}
+    </div>{% endif %}
+  {% empty %}
+    <p>本平台暂无项目，快来创建一个吧！</p>
+  {% endfor %}
+
+  {% if page.has_previous or page.has_next %}
+    <div class="mt-3 mb-5">
+      <nav class="my-pagination">
+        <ul class="pagination pagination-lg">
+          <li class="page-item">
+            <a href="?page=1" class="page-link" aria-label="First">
+              <span aria-hidden="true">第一页</span>
+            </a>
+          </li>
+
+          <li class="page-item">
+            <a {% if page.has_previous %}
+              href="?page={{ page.previous_page_number }}" class="page-link"
+            {% else %}
+              href="javascript:void(0);" class="page-link disabled"
+            {% endif %}
+              aria-label="Previous">
+              <span aria-hidden="true">上一页</span>
+            </a>
+          </li>
+
+          {% if page.number <= 3 %}
+            {% for page_num in paginator.page_range %}
+              {% if page_num == page.number %}
+                <li class="page-item active">
+                  <a href="#" class="page-link disabled">{{ page_num }}</a>
+                </li>
+              {% elif page_num <= 5 %}
+                <li class="page-item">
+                  <a href="?page={{ page_num }}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% elif page.number >= paginator.num_pages|add:"-3" %}
+            {% for page_num in paginator.page_range %}
+              {% if page_num == page.number %}
+                <li class="page-item active">
+                  <a href="#" class="page-link disabled" class="page-link">{{ page_num }}</a>
+                </li>
+              {% elif page_num > paginator.num_pages|add:"-5" %}
+                <li class="page-item">
+                  <a href="?page={{ page_num }}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            {% for page_num in paginator.page_range %}
+              {% if page_num|add:"2" >= page.number and page_num < page.number %}
+                <li class="page-item">
+                  <a href="?page={{ page_num }}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% elif page_num == page.number %}
+                <li class="page-item active">
+                  <a href="#" class="page-link disabled" class="page-link">{{ page_num }}</a>
+                </li>
+              {% elif page_num > page.number and page_num|add:"-2" <= page.number %}
+                <li class="page-item">
+                  <a href="?page={{ page_num }}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          <li class="page-item">
+            <a href="?page={{ paginator.num_pages }}" class="page-link" aria-label="Last">
+              <span aria-hidden="true">末页({{ paginator.num_pages }}页)</span>
+            </a>
+          </li>
+
+          <li class="page-item">
+            <a {% if page.has_next %}
+              href="?page={{ paginator.num_pages }}" class="page-link"
+            {% else %}
+              href="javascript:void(0);" class="page-link disabled"
+            {% endif %}
+              aria-label="Next">
+              <span aria-hidden="true">下一页</span>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+  {% endif %}
+  <hr style="margin: 5rem 0;">
+</main>
+{% endblock %}
+

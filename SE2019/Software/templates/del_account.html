@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+<title>删除账号</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+<div class="py-5 mt-5 text-center">
+  <h2 class="my-5" style="color: red">删除账号</h2>
+  <p class="lead">您确定要删除账号吗？</p>
+  <p class="lead">删除账号后，您将<span style="color:red;">无法看到</span>项目和个人的详细信息，也无法继续享受本网站带来其他的服务</p>
+  <p class="lead">在您执行删除账号操作后的<span style="color:red;">14天</span>内账号将被<span style="color:red;">冻结</span>，然后<span style="color:red;">彻底删除</span>。</p>
+  <p class="lead">在<span style="color:red;">前7天</span>您仍可以在个人中心取消该操作</p>
+</div>
+
+<div class="row mt-3" style="align-items: center">
+  <div class="col-md-12 order-md-1">
+    <form action='' method="post" class="justify-content-center">
+      {% csrf_token %}
+      <input type='submit' class='btn btn-danger text-center' style="width: 38%; margin: 0px auto;display: table;" value='确定'/>
+    </form>
+  </div>
+</div>
+</main>
+{% endblock %}

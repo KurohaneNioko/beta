@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  <title>个人空间</title>
+{% endblock %}
+{% block side %}
+  <div class="layui-side layui-bg-black mt-5 pt-5">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        {%if request.session.uid == user.id %}
+          {% if not user.identity %}
+            <li class="layui-nav-item layui-nav-itemed">
+              <a class="" href={% url 'Space' user.id %}>我的空间</a>
+              <dl class="layui-nav-child">
+                <dd><a href={% url 'ReleaseProject' %}>创建项目</a></dd>
+                <dd><a href={% url 'MyProject' user.id %}>已有项目</a></dd>
+              </dl>
+            </li>
+          {% else %}
+            <li class="layui-nav-item"><a href={% url 'Certification' %}>投资人认证</a></li>
+          {% endif %}
+          <li class="layui-nav-item"><a href={% url 'Personal_information' user.id %}>我的信息</a></li>
+          <li class="layui-nav-item"><a href={% url 'Favlist' user.id %}>收藏</a></li>
+          <li class="layui-nav-item"><a href={% url 'History' %}>浏览历史</a></li>
+          <li class="layui-nav-item"><a href={% url 'Follow' user.id %}>关注数&nbsp;{{ user.follower.count }}</a></li>
+          <li class="layui-nav-item"><a href={% url 'Fans' user.id %}>粉丝数&nbsp;{{ user.follower_of_user.count }}</a></li>
+          <li class="layui-nav-item"><a href={% url 'Dynamic' %}>动态 &nbsp;{% if count_of_new_dynamic > 0 %}{{ count_of_new_dynamic }} new{% endif %}</a></li>
+        {% else %}
+          <li class="layui-nav-item"><a href={% url 'Space' user.id %}>Ta的空间</a></li>
+          {%if not user.identity%}
+            <li class="layui-nav-item"><a href={% url 'MyProject' user.id %}>Ta的项目</a></li>
+          {%endif%}
+          <li class="layui-nav-item"><a href={% url 'Personal_information' user.id %}>Ta的信息</a></li>
+          <li class="layui-nav-item"><a href={% url 'Favlist' user.id %}>Ta的收藏</a></li>
+          <li class="layui-nav-item"><a href={% url 'Follow' user.id %}>关注数&nbsp;{{ user.follower.count }}</a></li>
+          <li class="layui-nav-item"><a href={% url 'Fans' user.id %}>粉丝数&nbsp;{{ user.follower_of_user.count }}</a></li>
+        {% endif %}
+	{%if request.session.uid == user.id%}
+        <li class="layui-nav-item">&nbsp;</li>
+        <li class="layui-nav-item"><a href="{% url 'Changepwd' %}">修改密码</a></li>
+        <li class="layui-nav-item"><a href="{% url 'Change_email' %}">修改邮箱</a></li>
+	{%endif%}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_shell %}
+<div class="layui-body mt-5 py-4">
+{% block page %}
+
+<!-- 内容主体区域 -->
+{% endblock %}
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block addcsss %}
+  <link rel="stylesheet" href="../../static/layui/css/layui.css"  media="all">
+{% block addCSS %}
+{% endblock %}
+{% endblock %}
+
+{% block addJS %}
+{% block jsss %}
+{% endblock %}
+{% endblock %}
+

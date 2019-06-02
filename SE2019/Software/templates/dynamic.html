@@ -1,0 +1,52 @@
+{% extends 'base-personal.html' %}
+{% block title %}
+    <title>Title</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+<div class="my-3 text-center">
+  <h2 class="mb-4">
+    动态
+  </h2>
+  {% if not dynamics %}
+  <p class="lead mb-5">
+    暂时还没有动态
+  </p>
+  {% endif %}
+</div>
+<div class="row">
+{% if dynamics %}
+  <table class="table table-striped table-sm">
+    <tr style="text-align: center;font-size: 18px">
+      <th style="width: 150px">
+
+      </th>
+      <th style="width: 500px">
+
+      </th>
+    </tr>
+    {% for d in dynamics %}
+      <tr>
+        <td style="text-align: center;width: 150px;font-size: 16px">
+          {{ d.time_of_dynamic }}
+        </td>
+
+        <td style="text-align: center;width: 500px;font-size: 16px">
+          {% if d.typ == 0 %}
+            您收藏的项目&nbsp;<a href="{% url 'ProjectInfo' d.project.pid %}" style="color: #4466cb;">{{ d.project.name }}</a>&nbsp;的信息发生了改变
+
+          {% elif d.typ == 1 %}
+            您关注的用户&nbsp;{{ d.project.creator.name }}&nbsp;发布了项目&nbsp;<a href="{% url 'ProjectInfo' d.project.pid %}" style="color: #4466cb;">{{ d.project.name }}</a>
+
+          {% endif %}
+        </td>
+
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+</div>
+<hr style="margin: 5rem 0;">
+</main>
+{% endblock %}

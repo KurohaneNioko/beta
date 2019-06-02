@@ -1,0 +1,11 @@
+img.captcha {
+	border-radius: 2px;
+	cursor: pointer;
+	position: absolute;
+	z-index: 3;
+	left: 0;
+	top: 0;
+}
+#id_captcha_1 {
+	padding-left: 96px;
+}

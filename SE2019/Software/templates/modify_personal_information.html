@@ -1,0 +1,208 @@
+{% extends 'base-personal.html' %}
+{% load globalVarConvertor %}
+{% load widget_tweaks %}
+
+{% block title %}
+<title>Title</title>
+{% endblock %}
+
+{% block addCSS %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../static/css/modify_personal_information.css"/>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="container mt-4">
+  <div class="text-center">
+    <h2>个人信息修改</h2>
+    <h3 id='area-police'></h3>
+  </div>
+ {%for error in personal_info.errors.values%}
+        <div class="alert alert-warning">{{ error }}</div>
+    {%endfor%}
+  <form class="form" action='' method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-4 order-md-1 mb-4">
+        <div class="card mb-3">
+          <div class="card-header py-2">
+            <b>头像</b>
+          </div>
+          <div class="card-body px-2 py-2">
+            <img src="/media/{{ user.avatar }}" height="64" width="64">
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-header py-2">
+            <b>更改头像<br>仅限jpg, png, gif, webp格式</b>
+          </div>
+          <div class="card-body px-2 py-2">
+            <input type="file" id="uploadimg" name="img" data-browse-on-zone-click="true"  accept="image/*"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 order-md-3 px-0">
+        <div class="card mb-3">
+          <div class="card-header py-2">
+            <b>*项目领域（至少选择1个领域）</b>
+          </div>
+          <div class="card-body px-2 py-2">
+            {% for a in project_info.area|getAREA_CHOICE %}
+              {% if forloop.counter0 != 25 %}
+                <div class="custom-control custom-checkbox custom-control-inline col-4 mx-1 pr-1">
+              {% else %}
+                <div class="custom-control custom-checkbox custom-control-inline col-4 mx-1 pr-1">
+              {% endif %}
+            <input id="id_area_{{ forloop.counter0 }}" class="custom-control-input" type="checkbox" name="area"
+                   value="{{ forloop.counter0 }}" title="{{ a.1 }}"
+            {% if a.0 in user.area|chk_num_list  %}checked{% endif %}>
+            <label class="custom-control-label" for="id_area_{{ forloop.counter0 }}">{{ a.1 }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 order-md-2">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="{{ personal_info.nickname.id_for_label }}">昵称</label>
+            {{ personal_info.nickname|attr:"class:form-control" }}
+            <div class="invalid-feedback">
+              请输入有效的昵称！
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ personal_info.location.id_for_label }}">地区</label>
+            {{ personal_info.location|attr:"class:form-control" }}
+            <div class="invalid-feedback">
+              请输入有效的地区！
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ personal_info.introduction.id_for_label }}">简介</label>
+          {{ personal_info.introduction|attr:"class:form-control"|attr:"rows:11" }}
+          <div class="invalid-feedback">
+            Not OK!
+          </div>
+        </div>
+
+        <input type="submit" class="btn btn-primary btn-block" value='修改'/>
+      </div>
+
+      </div>
+    </div>
+
+{#    <button type="submit" onclick="submit_successful()">上传</button>#}
+  </form>
+
+</main>
+{% endblock %}
+
+{% block jsss %}
+<script>
+    function submit_successful() {
+        var x = document.getElementById('uploadimg');
+        if (x.value === '') {
+            alert('上传失败，请选择要上传的图片！')
+
+        } else {
+            var AllowExt = ['.jpg', '.gif', '.png', '.webp'];
+            <!-- 获取图片格式：.jpg,.png -->
+            var FileExt = x.value.substr(x.value.lastIndexOf(".")).toLowerCase();
+            <!-- 判断一个字符串是否在数组中 -->
+            if (AllowExt.toString().indexOf(FileExt) > -1) {
+
+                alert('上传成功！！！');
+
+            } else {
+                alert('上传失败，上传文件格式为：(.jpg,.png,.gif,.webp),当前格式为:' + FileExt + '请重新上传！');
+            }
+        }
+
+
+    }
+</script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/plugins/piexif.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/plugins/sortable.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/plugins/purify.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/fileinput.min.js"></script>
+<script src="../../static/js/zh.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/themes/fas/theme.min.js"></script>
+<script src="../../static/js/modify_personal_information.js"></script>
+{% endblock %}
+
+{% if type == 0 %}
+    <form action='' method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input id="uploadimg" type="file" name="img"/>
+    <button type="submit" onclick="submit_successful()">上传</button>
+    <p id="tip"></p>
+    <script>
+
+        function submit_successful() {
+            var x = document.getElementById('uploadimg');
+            if (x.value == '') {
+                alert('上传失败，请选择要上传的图片！')
+
+            } else {
+                var AllowExt = ['.jpg', '.gif', '.png', '.webp'];
+                <!-- 获取图片格式：.jpg,.png -->
+                var FileExt = x.value.substr(x.value.lastIndexOf(".")).toLowerCase();
+                <!-- 判断一个字符串是否在数组中 -->
+                if (AllowExt.toString().indexOf(FileExt) > -1) {
+
+                    alert('上传成功！！！');
+
+                } else {
+                    alert('上传失败，上传文件格式为：(.jpg,.png,.gif,.webp),当前格式为:' + FileExt + '请重新上传！');
+                }
+            }
+
+
+        }
+    </script>
+    <div>
+        <p>
+            头像：<img src="/media/{{ user.avatar }} "height="64" width="64">
+        </p>
+
+    </div>
+    <div>
+        <p>
+            昵称：{{ personal_info.nickname }}
+        </p>
+
+    </div>
+    <div>
+        <p>
+            省份：
+        </p>
+        {{ personal_info.location }}
+    </div>
+    <div>
+        <p>
+            * 关注领域：
+        </p>
+        {{ personal_info.area }}
+    </div>
+    <div>
+        <p>
+            * 个人简介：
+        </p>
+        {{ personal_info.introduction }}
+    </div>
+
+    <div>
+        <input type='submit' value='修改'/>
+    </div>
+</form>
+{% endif %}
+

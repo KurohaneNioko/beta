@@ -1,0 +1,28 @@
+.border-top { border-top: 1px solid #e5e5e5; }
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
+.border-top-gray { border-top-color: #adb5bd; }
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.lh-condensed { line-height: 1.25; }
+
+.card-body{
+	align-items: center;
+	align-content: center;
+}
+
+.custom-control-inline {
+	max-width: 30%;
+}
+
+img.captcha {
+	border-radius: 2px;
+	cursor: pointer;
+	position: absolute;
+	z-index: 3;
+	left: 0;
+	top: 0;
+}
+#id_captcha_1 {
+	padding-left: 90px;
+}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+<title>重新发送验证邮件</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+<div class="py-5 mt-5 text-center">
+{#  <h2 class="my-5" style="color: red">删除账号</h2>#}
+  <p class="mt-5 lead">您将重新发送验证邮件</p>
+  <p class="lead">这会使您之前的验证邮件失效</p>
+</div>
+
+<div class="row mt-3" style="align-items: center">
+  <div class="col-md-12 order-md-1">
+    <form action='' method="post" class="justify-content-center">
+      {% csrf_token %}
+      <input type='submit' class='btn btn-success text-center' style="width: 38%; margin: 0px auto;display: table;" value='重新发送邮件'/>
+    </form>
+  </div>
+</div>
+</main>
+{% endblock %}

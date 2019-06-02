@@ -1,0 +1,311 @@
+{% extends "base-personal.html" %}
+{% load globalVarConvertor %}
+{% block title %}
+<title>{{ user.name }}的个人空间</title>
+
+<style>
+    .layui-body.mt-5{overflow:auto;}
+    .h-user{
+        position: relative;
+        overflow: hidden;
+	width:1300px;
+	margin:20px 0 0 20px;
+    }
+    .h-avatar{
+        position: relative;
+        float: left;
+        width: 64px;
+        height: 64px;
+        border: 2px solid hsla(0,0%,100%,4);
+        border-radius: 52px
+    }
+    #h-avatar{
+        width: 64px;
+        height: 64px;
+        background: #fff;
+        border-radius: 48px;
+    }
+    .h-basic{
+        float: left;
+        margin: 10px 0 0 20px;
+	width:80%;
+    }
+    #h-name{
+        display: inline-block;
+        font-weight: 700;
+        line-height: 18px;
+        font-size: 18px;
+        vertical-align: middle;
+	margin:8px 0;
+    }
+    #h-sign{
+        margin-top: 8px;
+        height: 26px;
+        line-height: 26px;
+        position: relative;
+        top: -1px;
+        color: #6d757a;
+        font-size: 12px;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	width:80%;
+    }
+    .h-action{
+        position: absolute;
+        bottom: 0;
+        right:0;
+        display: inline-block;
+
+    }
+    .h-btn{
+        background: #000;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        float: left;
+        text-align: center;
+        border-radius: 4px;
+        margin: 0 20px 15px 0;
+        width: 76px;
+        height: 30px;
+        line-height: 30px;
+        text-decoration:none;
+        outline: none;
+        border:none;
+        font-family: "宋体";
+    }
+    .section-project{
+        margin-top: 40px;
+        padding:20px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        float: left;
+	overflow:auto;
+	width:1300px;
+    }
+    .section-title{
+        font-size:20px;
+        font-weight: 400;
+        line-height: 33px;
+        padding: 0 0 15px;
+        position: relative;
+    }
+    .section-more{
+        position: absolute;
+        display: inline-block;
+        border: 1px solid #b8c0cc;
+        border-radius: 4px;
+        color: #6d757a;
+        font-size: 12px;
+        line-height: 22px;
+        top: 6px;
+        right: 2px;
+        width:4%;
+	text-align:center;
+        text-decoration: none;
+    }
+    .section-count{
+        border:1px solid #ddd;
+        border-radius: 3px;
+        color: #777;
+        font-size: 12px;
+        line-height: 18px;
+        height: 20px;
+        margin-left: 11px;
+        padding: 0 5px;
+        display: inline-block;
+        position: relative;
+    }
+    .project-list{
+        padding: 0 0 20px 0;
+        float: left;
+        display: none;
+        width:100%
+        
+    }
+    .project-list.active{
+        display: block;
+        
+    }
+    .list-item{
+        border: 1px solid rgba(0,0,0,.125);
+        display: inline-block;
+        border-radius: 4px;
+        margin: 19px;
+        padding: 20px;
+        float:left;
+	height:300px;
+        width:30%;
+        box-sizing: border-box;
+        box-shadow: 0 1px 1px 1px rgba(121, 146, 185, .54);
+	position:relative;
+    }
+    a.title{
+        text-decoration: none;
+        display: inline-block;
+        font-size: 22px;
+        margin-bottom: 10px; 
+        box-sizing: border-box;
+        cursor:pointer;
+	overflow:hidden;
+	width:100%;
+	text-overflow:ellipsis;
+	white-space:nowrap; 
+    }
+    a.title:link,a.title:visited{
+        color:black;    
+    }
+    a.title:hover{
+        color:blue;
+        text-decoration: none;
+    }
+
+    .intro{
+        color: black;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        font-size:16px;
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .detailed-intro{
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+
+        font-size: 16px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        word-wrap: break-word;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+    .label-row{
+        display: block;
+        position: absolute;
+        bottom: 20px;
+	overflow:auto;
+	max-height:100px;
+    }
+    .label{
+        height: 38px;
+        text-align: center;
+        font-size: 12px;
+        vertical-align: middle;
+        border:1px solid black;
+        border-radius: 4px;
+        padding: 10px;
+        margin: 5px;
+        float: left;
+        box-sizing: border-box;
+        cursor:pointer; 
+    }
+    .label.area{
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .label.area:hover{
+        background: #0069d9;
+    }
+    .label.status{
+        background:#ffc107;
+        color: black;
+        border-color: #ffc107;
+    }
+    .label.status:hover{
+        background: #e0a800;
+    }
+</style>
+{% endblock %}
+{% block page %}
+{%if request.session.uid == user.id%}
+{%set level = 3%}
+{%elif reuqest.session.is_login%}
+{%set level = request.session.level%}
+{%else%}{%set level = 0%}{%endif%}
+
+<div class="h-user">
+    <div class="h-avatar">
+        <img src='/media/{{user.avatar}}' id = "h-avatar">
+    </div>
+    <div class="h-basic">
+        <div>
+            <span id="h-name">{{user.name}}</span>
+        </div>
+        <div id='h-sign'>
+            <span>{{user.introduction}}</span>
+        </div>
+    </div>
+{%if request.session.uid != user.id %}
+    <div class="h-action">
+        <form method="post">
+            {% csrf_token %}
+            {%if judge%}
+            <input type="hidden" value="取消关注" name="feature">
+            <button type="submit" class="h-btn">取消关注</button>
+            {%else%}
+            <input type="hidden" value="关注" name="feature">
+            <button type="submit" class="h-btn">关注Ta</button>
+            {%endif%}
+            <a href={%url 'Msg' user.id%} class="h-btn">发消息</a>
+        </form>
+        
+    </div>
+{%endif%}
+</div>
+<div class="section-project">
+{% if user.identity == 0 %}
+    <div class="section-title">
+        <span>{%if request.session.uid == user.id%}我的项目{%else%}Ta的项目{%endif%}</span>
+        <span class="section-count">{{user.my_project.count}}</span>
+        <a class="section-more" href={%url 'MyProject' user.id%}>更多</a>
+    </div>
+<div class="project-list active">
+{% for p in user.my_project.all|permission_select:level|slice:"3"%}
+ <div class="list-item">
+				<a href="/project_info/{{p.pid}}"  class="title">{{p.name}}</a>
+				<div class="intro">简介/标签:{{p.introduction}}</div>
+				<div class="detailed-intro">{{p.detailed_introduction}}</div>
+				<div class="label-row">
+					<div class="label status">
+						<span>{{p.status|status2str}}</span>
+					</div>
+					{%for a in p.area|area2list%}
+					<div class="label area">
+						<span>{{a}}</span>
+					</div>
+					{%endfor%}
+				</div>
+</div>
+{%empty%}
+{%if request.session.uid == user.id%}
+暂时还没有项目
+{%else%}暂时还没有项目或权限不足{%endif%}
+{%endfor%}
+</div>
+{% else %}
+<div class="section-title">
+  <span>投资人认证信息</span>
+</div>
+{%if user.level == 0%} <h3>尚未通过认证</h3>
+{%else%}
+{%if user.level == 1%}
+<span>权限等级：中</span>
+{%endif%}
+{%if user.level == 2%}
+<span>权限等级：高</span>
+{% endif %}
+<div>所属公司:{{user.applicant.company}}</div>
+{%if user.application.position%}<div>职位:{{user.application.position}}</div>{%endif%}
+{%endif%}
+{% endif %}
+
+</div>
+</div>
+{% endblock %}

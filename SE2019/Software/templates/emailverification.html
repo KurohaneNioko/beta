@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+<title>等待邮箱确认</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+<div class="py-5 mt-5 text-center">
+  <p class="lead mt-5">&nbsp;</p>
+  <h2 class="my-5">等待完成邮箱确认</h2>
+  <h1 class="text-center">{{ message }}</h1>
+</div>
+
+<div class="row mt-3" style="align-items: center">
+  <div class="col-md-6 order-md-1 px-0" style="text-align: center;">
+    <a href="{% url 'Resendemail'%}" class="btn btn-info">重新发送邮件</a>
+  </div>
+  <div class="col-md-6 order-md-1 px-0" style="text-align: center;">
+    <a href="{% url 'Changeautemail'%}" class="btn btn-success">修改注册邮箱</a>
+  </div>
+</div>
+</main>
+{% endblock %}

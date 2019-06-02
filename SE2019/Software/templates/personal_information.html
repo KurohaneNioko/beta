@@ -1,0 +1,84 @@
+{% extends 'base-personal.html' %}
+{% block title %}
+<title>个人信息</title>
+<style>
+.avatar{
+	width:64px;
+	height:64px;
+	border-radius:48px;
+}
+</style>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="container pt-5">
+  <div class="text-center mb-5">
+    <h3>{{ user.name }}的个人信息</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 order-md-2 mb-4">
+      {% if request.session.uid == user.id %}
+      <a class="btn btn-danger py-1 mb-3" style="width: 100%;"
+         href="{% url 'Modify_personal_information' user.id %}">修改</a>
+      {% endif %}
+      <div class="card mb-3">
+        <div class="card-header py-2">
+          <b>关注领域：</b>
+        </div>
+        <div class="card-body px-2 py-2">
+          {% for area in area_of_user %}
+            <button type="button" class="btn btn-primary mb-1">{{ area }}</button>
+          {% endfor %}
+        </div>
+      </div>
+      {% if request.session.uid == user.id %}
+      {% if not user.has_confirmed_delete %}
+      <a class="btn btn-danger py-1 mb-3" style="width: 100%;"
+         href="{% url 'Del_account' %}">注销账户（删除账户）</a>
+      {% else %}
+      <a class="btn btn-danger py-1 mb-3" style="width: 100%;"
+         href="{% url 'Wait_del_account' %}">撤销注销账户（撤销删除账户）</a>
+      {% endif %}
+      {% endif %}
+    </div>
+
+      <hr class="mb-4">
+      <div class="col-md-8 order-md-1">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>用户名：</label>
+            <input disabled class="form-control btn-outline-light"
+                   style="color:#000;" value="{{ user.name }}">
+          </div>
+          <div class="col-md-2 mb-3 pr-0" style="text-align: right">
+            <label>头像：</label>
+            <span class="">&nbsp;</span>
+          </div>
+          <div class="col-md-4 mb-3 pl-0">
+            <img src="/media/{{ user.avatar }}" class="avatar">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>昵称：</label>
+            <input disabled class="form-control btn-outline-light"
+                    style="color:#000;" value="{{ user.nickname }}">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>所在地区：</label>
+            <input disabled class="form-control btn-outline-light"
+                    style="color:#000;" value="{{ information.location }}">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label>简介：</label>
+          <textarea disabled class="form-control btn-outline-light"
+                    rows="8" style="color: #000;resize: none">{{ user.introduction }}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+<title>修改邮箱</title>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="main container">
+<div class="py-5 mt-5 text-center">
+  <h2 class="mt-5">请输入您要使用的新邮箱</h2>
+</div>
+<div class="row">
+  <h1 class="text-center">{{ message }}</h1>
+</div>
+<div class="row mt-4">
+  <div class="col-md-12 order-md-1">
+    <form action="" method="post" class="form-inline justify-content-center">
+      {% csrf_token %}
+      <input style="width: 400px" class="form-control ml-5 mr-4 mt-sm-0"
+             type="text" name="new_email" required>
+      <input type="submit" class="btn btn-outline-success" value="确认"></input>
+    </form>
+  </div>
+</div>
+</main>
+{% endblock %}

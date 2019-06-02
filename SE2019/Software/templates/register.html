@@ -1,0 +1,155 @@
+{% extends "base.html"%}
+{% load globalVarConvertor %}
+{% load widget_tweaks %}
+
+{% block title %}
+  <title>用户注册</title>
+{% endblock %}
+
+{% block addCSS %}
+<link rel='stylesheet' href="../../static/css/register.css"/>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="container mt-5 py-5">.
+  <div class="text-center mb-5">
+    <h2>欢迎注册</h2>
+    {%for error in register_form.errors.values%}
+        <div class="alert alert-warning">{{ error }}</div>
+    {%endfor%}
+    {% if message %}
+      <div class="alert alert-warning">{{ message|linebreaks }}</div>
+    {% endif %}
+  </div>
+  <form class='form' action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-4 order-md-2 mb-4">
+        <div class="card mb-3">
+          <div class="card-header py-2">
+            <b>*关注领域（至少选择1个领域）</b>
+            
+          </div>
+          <div class="card-body px-2 py-2">
+            {% for a in register_form.area|getAREA_CHOICE %}
+              {% if forloop.counter0 != 25 %}
+            <div class="custom-control custom-checkbox custom-control-inline col-4 mx-1 pr-1">
+              {% else %}
+            <div class="custom-control custom-checkbox custom-control-inline col-4 mx-1 pr-1">
+              {% endif %}
+              <input id="id_area_{{ forloop.counter0 }}" class="custom-control-input" type="checkbox" name="area"
+               value="{{ forloop.counter0 }}" title="{{ a.1 }}" {% if forloop.counter0 in area|checkbox_arealist %}checked{% endif %} >
+              <label class="custom-control-label" for="id_area_{{ forloop.counter0 }}">{{ a.1 }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <hr class="mb-4">
+
+      <div class="col-md-8 order-md-1">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="{{ register_form.username.id_for_label }}">*用户名（由英文和数字组成，长度为3-16）</label>
+            {{ register_form.username|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ register_form.email.id_for_label }}">*电子邮箱</label>
+            {{ register_form.email|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ register_form.password1.id_for_label }}">*密码（由英文和数字组成，长度为6-16）</label>
+            {{ register_form.password1|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ register_form.password2.id_for_label }}">*确认密码</label>
+            {{ register_form.password2|attr:"class:form-control" }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 mb-3">
+            <label for="{{ register_form.idnumber.id_for_label }}">*身份证号</label>
+            {{ register_form.idnumber|attr:"class:form-control" }}
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="{{ register_form.realname.id_for_label }}">*真实姓名</label>
+            {{ register_form.realname|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="{{ register_form.phone_num.id_for_label }}">*手机号码</label>
+            {{ register_form.phone_num|attr:"class:form-control" }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="{{ register_form.identity.id_for_label }}">*身份</label>
+            {{ register_form.identity|attr:"class:form-control" }}
+          </div>
+
+          <div class="col-md-2 mb-3">
+            <label for="{{ register_form.sex.id_for_label }}">*性别</label>
+            {{ register_form.sex|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ register_form.captcha.id_for_label }}">*验证码</label>
+            <br>
+            <div class="col-md-12 px-0">
+            {{ register_form.captcha|attr:"class:form-control" }}
+            {{ register_form.captcha.errors }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <button type="reset" class="btn btn-default btn-outline-secondary">全部重填</button>
+          </div>
+          <div class="col-md-4 mb-3">
+          </div>
+          <div class="col-md-5 mb-3">
+            <button type="submit" class="btn btn-primary btn-block">注册</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <hr class="center"/>
+</main>
+{% endblock %}
+
+{% block addJS%}
+<script>
+    $(function(){
+    $('.captcha').css({
+        'cursor': 'pointer'
+    })
+    $('.captcha').click(function(){
+        console.log('click');
+         $.getJSON("/captcha/refresh/",
+                  function(result){
+             $('.captcha').attr('src', result['image_url']);
+             $('#id_captcha_0').val(result['key'])
+          });});
+    $('#id_captcha_1').blur(function(){
+  // #id_captcha_1为输入框的id，当该输入框失去焦点是触发函数
+        json_data={
+            'response':$('#id_captcha_1').val(),  // 获取输入框和隐藏字段id_captcha_0的数值
+            'hashkey':$('#id_captcha_0').val()
+        }
+        $.getJSON('/ajax_val', json_data, function(data){ //ajax发送            $('#captcha_status').remove()
+            if(data['status']){ //status返回1为验证码正确， status返回0为验证码错误， 在输入框的后面写入提示信息
+                $('#id_captcha_1').after('<span id="captcha_status" >*验证码正确</span>')
+            }else{
+                 $('#id_captcha_1').after('<span id="captcha_status" >*验证码错误</span>')
+            }
+        });
+    });
+    })
+    </script>
+{% endblock %}
+

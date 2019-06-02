@@ -1,0 +1,260 @@
+
+body {
+    font-family: Arial;
+    padding: 10px;
+    background: #f1f1f1;
+}
+
+.msg-container {
+    overflow: auto;
+    width: 950px;
+    height: 600px;;
+    margin: auto;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px 0 rgba(121, 146, 185, .54);
+    border-radius: 4px;
+}
+
+.contacts-list {
+    width: 200px;
+    height: 600px;
+    background-color: white;
+    float: left;
+    box-sizing: border-box;
+
+    border-right-style: solid;
+    border-width: 1px;
+    border-color: #ECEAE9;
+}
+
+.contacts-list-title {
+    height: 5%;
+    font-family: 宋体;
+    font-size: 14px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    line-height: 200%;
+}
+
+.contacts-list-content {
+    height: 95%;
+    background-color: white;
+    overflow: auto;
+    border-top-style: solid;
+    border-width: 1px;
+    border-color: #ECEAE9;
+    box-sizing: border-box;
+}
+
+.contacts-list-item {
+    height: 12%;
+    padding: 8% 10%;
+    box-sizing: border-box;
+    width: 100%;
+    text-decoration: none;
+    float: left;
+    border-bottom: 1px solid #ffffff;
+    position: relative;
+}
+
+.contacts-list-item.active {
+    background: #F4F4F4;
+}
+
+a.contacts-list-item:link, a.contacts-list-item:visited {
+    color: black;
+}
+.close{
+    width: 12px;
+    height: 12px;
+    display: none;
+    border: none;
+    background-image: url("/static/close.bmp");
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor:default;
+}
+a.contacts-list-item:hover, a.contacts-list-item:active {
+    background: #F4F4F4;
+    color: black;
+
+}
+a.contacts-list-item:hover .close{
+    display: inline-block;
+}
+.name-box {
+    display: inline-block;
+}
+
+.name-box.name {
+    font-family: "宋体";
+    text-align: left;
+    font-size: 14px;
+    display: block;
+    color: #333333;
+}
+
+.name-box.last-word {
+    font-family: 宋体;
+    text-align: left;
+    font-size: 10px;
+    color: #999999;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 85px;
+    padding: 5% 0;
+}
+
+.new-msg-item {
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    float: right;
+    margin: 2% 0 8% 2%;
+    display: inline-block;
+    background: #F25D8E;
+    font-size: 10px;
+    font-family: "Times New Roman";
+    text-align: center;
+    line-height: 15px;
+    color: white;
+}
+
+.dialog {
+    width: 750px;
+    height: 600px;
+    float: left;
+}
+
+.dialog-title {
+    height: 5%;
+    background-color: white;
+    box-sizing: border-box;
+    line-height: 200%;
+    text-align: center;
+    font-family: 宋体;
+    font-size: 14px;
+}
+
+.dialog-msg-box {
+
+    width: 100%;
+    height: 60%;
+    background-color: #F4F4F4;
+    overflow: auto;
+    border-top-style: solid;
+    border-width: 1px;
+    border-color: #ECEAE9;
+    box-sizing: border-box;
+}
+
+.msg-item {
+    margin: 0 10px 15px;
+    width: 95%;
+    clear: both;
+    box-sizing: border-box;
+}
+
+.time-item {
+    clear: both;
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin: 15px 0;
+    font-family: "宋体", "楷体", "Times New Roman";
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.msg-item.not-me {
+    float: left;
+}
+
+.msg-item.is-me {
+    float: right;
+}
+
+a.avatar {
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    float: inherit;
+}
+
+img.avatar {
+    border-radius: 100%;
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    float: inherit;
+    margin-right: 6%;
+}
+
+.message {
+    width: auto;
+    height: auto;
+    border-radius: 25px;
+    margin: 0.5% 1% 0 1%;
+    display: inline-block;
+    float: inherit;
+    max-width: 80%;
+
+}
+
+.message.is-me {
+    background: #80B9F2;;
+}
+
+.message.not-me {
+    background: #ffffff;
+}
+
+.message-content {
+    padding: 5px 10px;
+    font-size: 14px;
+    font-family: "宋体", "楷体", "Times New Roman";
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.message-content.is-me {
+    color: white;
+}
+
+.message-content.not-me {
+    color: black;
+}
+
+.send-box {
+    height: 35%;
+    box-sizing: border-box;
+    border-top-style: solid;
+    border-width: 1px;
+    border-color: #ECEAE9;
+}
+
+.text-area {
+    width: 100%;
+    height: 85%;
+    box-sizing: border-box;
+    resize: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ECEAE9;
+    background-color: #F4F4F4;
+}
+
+.send-box.send-btn {
+    float: right;
+    height: auto;
+    border-radius: 12px;
+    outline: none;
+    display: inline-block;
+    width: 65px;
+    background-color: #2aabd2;
+    color: white;
+    margin-right: 2%;
+}

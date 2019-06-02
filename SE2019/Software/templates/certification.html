@@ -1,0 +1,73 @@
+{% extends "base-personal.html"%}
+{% load globalVarConvertor %}
+{% load widget_tweaks %}
+
+{% block title %}
+  <title>投资人认证</title>
+{% endblock %}
+
+{% block addCSS %}
+<link rel='stylesheet' href="../../static/css/register.css"/>
+{% endblock %}
+
+{% block page %}
+<main role="main" class="container mt-5 pb-5">
+  <div class="text-center mb-5">
+    <h2>欢迎认证</h2>
+    {% if message %}
+      <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
+  </div>
+  <form class='form' action="" method="post">
+    {% csrf_token %}
+      <hr class="mb-4">
+
+      <div class="col-md-8 order-md-1">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="{{ application_form.company.id_for_label }}">*所属公司</label>
+            {{  application_form.company|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{  application_form.position.id_for_label }}">所在职位</label>
+            {{  application_form.position|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{  application_form.scale.id_for_label }}">*投资规模</label>
+            {{  application_form.scale|attr:"class:form-control" }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="{{ application_form.currency.id_for_label }}">*投资币种</label>
+            {{  application_form.currency|attr:"class:form-control" }}
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-10 mb-3">
+            <label for="{{ application_form.introduction.id_for_label }}">*个人介绍</label>
+            {{  application_form.introduction|attr:"class:form-control" }}
+          </div>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <button type="reset" class="btn btn-default btn-outline-secondary">全部重填</button>
+          </div>
+          <div class="col-md-4 mb-3">
+          </div>
+          <div class="col-md-5 mb-3">
+            <button type="submit" class="btn btn-primary btn-block">提交申请</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <hr class="center"/>
+
+</main>
+{% endblock %}
+

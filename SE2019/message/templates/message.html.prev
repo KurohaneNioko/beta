@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>我的消息</title>
+</head>
+<link rel="stylesheet" href={% static 'message/css4Msg.css' %}   type="text/css">
+
+<body>
+<div class="msg-container">
+    <div class="contacts-list">
+        <div class="contacts-list-title">
+            近期消息
+        </div>
+        <div class="contacts-list-content">
+            {% for contacts in recent %}
+                <a class="contacts-list-item" href={% url 'Msg' contacts.user2.id %}>
+                    <img class="avatar" src="/media/{{contacts.user2.avatar}}">
+                    <div class="name-box">
+                        <div class="name-box name" title={{ contacts.user2.name }}>{{ contacts.user2.name }}</div>
+                        <div class="name-box last-word"></div>
+                    </div>
+                    <div  class="close"></div>
+                </a>
+
+            {% endfor %}
+        </div>
+    </div>
+    <div class="dialog">
+        <div class="dialog-title">
+            {{ current_contact.name }}
+        </div>
+        <div class="dialog-msg-box">
+        </div>
+        <div class="send-box">
+            <textarea class="text-area" placeholder="说点什么吧" autofocus="autofocus"></textarea>
+            <button type="submit" class="send-box send-btn" onclick="send_msg()" title="按Enter键发送消息，按Ctrl+Enter键换行"
+                    disabled="disabled">发送
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src={% static 'jquery-3.4.0.js' %}></script>
+<script src={% static 'message/reconnecting-websocket.min.js' %}></script>
+<script>
+    var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    var chatsock = new ReconnectingWebSocket(ws_scheme+"://"+window.location.host+"/ws" + window.location.pathname);
+    console.log(window.location.host+"/" + ws_scheme+window.location.pathname);
+    var lasttime = 0;
+    var firsttime = 0;
+    $(".name-box").find("div[title=" + "{{ current_contact.name }}" + "]").parent().parent().addClass('active');
+
+    function addMsgToBoxBottom(data) {
+        let chat = $(".dialog-msg-box");
+        if (data['send_time'] * 1000 - lasttime > 300000) {
+            let item_time = new Date(data['send_time'] * 1000);
+            let now = new Date();
+            let text = "";
+            if (item_time.toLocaleDateString() === now.toLocaleDateString())
+                text = "今天 " + item_time.toLocaleTimeString();
+            else text = item_time.toLocaleString();
+            chat.append(
+                $("<div class=\"time-item\"></div>").append(
+                    $("<span></span>").text(text)
+                )
+            );
+            lasttime = data['send_time'] * 1000;
+            if (!firsttime) firsttime = data['send_time'] * 1000;
+
+        }
+        let class_type = data['from_id'] ==={{ current_contact.id }} ? "not-me" : "is-me";
+        chat.append(
+            $("<div class=\"msg-item " + class_type + "\"></div>").append(
+                $("<a class=\"avatar\" href=\"/space/" + data['from_id'] + "\"></a>").append(
+			$("<img class='avatar' src='/media/"+data['avatar']+"'>")
+		)
+            ).append(
+                $("<div class=\"message " + class_type + "\">").append(
+                    $("<div class=\"message-content " + class_type + "\">").text(data['message'])
+                )
+            )
+        );
+        if (data['to_id'] ==={{ current_contact.id }}) {
+            $(".contacts-list-item").find("div[title=" + data['to_name'] + "]").parent().find(".name-box.last-word").text(data['message']);
+        } else {
+            $(".contacts-list-item").find("div[title=" + data['from_name'] + "]").parent().find(".name-box.last-word").text(data['message']);
+        }
+    }
+
+    function addMsgToBoxTop(data) {
+        let chat = $(".dialog-msg-box");
+        let old_height = chat[0].scrollHeight;
+        let class_type = data['from_id'] ==={{ current_contact.id }} ? "not-me" : "is-me";
+        chat.prepend(
+            $("<div class=\"msg-item " + class_type + "\"></div>").append(
+                $("<a class=\"avatar\" href=\"/space/" + data['from_id'] + "\"></a>").append(
+			$("<img class='avatar' src='/media/"+data['avatar']+"'>")	
+		)
+            ).append(
+                $("<div class=\"message " + class_type + "\">").append(
+                    $("<div class=\"message-content " + class_type + "\">").text(data['message'])
+                )
+            )
+        );
+        let item_time = new Date(data['send_time'] * 1000);
+        let now = new Date();
+        let text = "";
+        if (item_time.toLocaleDateString() === now.toLocaleDateString())
+            text = "今天 " + item_time.toLocaleTimeString();
+        else text = item_time.toLocaleString();
+
+        if (-data['send_time'] * 1000 + firsttime <= 300000) {
+            chat.find(".time-item").first().html("");
+        }
+        chat.prepend(
+            $("<div class=\"time-item\"></div>").append(
+                $("<span></span>").text(text)
+            )
+        );
+        firsttime = data['send_time'] * 1000;
+        chat.scrollTop(chat[0].scrollHeight - old_height)
+    }
+
+    //接收消息
+    chatsock.onmessage = function (message) {
+        var data = JSON.parse(message.data)['message'];
+        if (data['more_msg']) {
+            addMsgToBoxTop(data);
+            return;
+        }
+        if (data['initial']) {
+            if (data['from_id'] !== {{ current_contact.id }} && data['from_id'] !=={{ request.session.uid }}) {
+                var initial_ele = $(".contacts-list-item").find("div[title=" + data['from_name'] + "]");
+                if (data['new_count'] !== 0) {
+                    initial_ele.parent().parent().append(
+                        $("<div class=\"new-msg-item\"></div>").text(data['new_num'] > 99 ? 99 : data['new_count'])
+                    );
+                }
+                initial_ele.parent().find(".name-box.last-word").text(data['message']);
+            } else {
+                addMsgToBoxBottom(data);
+                $(".dialog-msg-box").scrollTop($(".dialog-msg-box")[0].scrollHeight) //滚动条置底
+            }
+        } else {
+            if (data['from_id'] !== {{ current_contact.id }} && data['from_id'] !=={{ request.session.uid }}) {
+                var ele = $(".contacts-list-item").find("div[title=" + data['from_name'] + "]");
+                if (ele.length === 0) {//若这条消息的发送者没有出现在联系人界面，则添加
+                    $(".contacts-list-content").prepend(
+                        $("<a class=\"contacts-list-item\" href=\"/msg" + data['from_id'] + "\" ></a>").append(
+                            $("<img class=\"avatar\" src='/media/"+data['avatar']+"'>"),
+                            $("<div class=\"name-box\"></div>").append(
+                                $("<div class=\"name-box name\" title=" + data['from_name'] + "></div>").text(data['from_name']),
+                                $("<div class=\"name-box last-word\"></div>").text(data['message'])
+                            ),
+                            $("<div class=\"new-msg-item\"></div>").text(1),
+                        )
+                    )
+                } else {
+                    if (ele.parent().parent().find(".new-msg-item").length !== 0) {
+                        let new_msg_item = ele.parent().parent().find(".new-msg-item");
+                        let new_num = parseInt(new_msg_item.text()) + 1;
+                        new_msg_item.text(new_num > 99 ? 99 : new_num);
+                    } else {
+                        ele.parent().parent().append(
+                            $("<div class=\"new-msg-item\"></div>").text(1)
+                        )
+                    }
+                    ele.next().text(data['message'])
+                }
+            } else {
+                addMsgToBoxBottom(data);
+                if (data['from_id'] ==={{ request.session.uid }}) {
+                    $(".dialog-msg-box").animate({scrollTop: $(".dialog-msg-box")[0].scrollHeight - $(".dialog-msg-box")[0].clientHeight},
+                        ($(".dialog-msg-box")[0].scrollHeight - $(".dialog-msg-box")[0].scrollTop));
+                } else {
+                    if (($(".dialog-msg-box")[0].scrollTop + $(".dialog-msg-box")[0].clientHeight) / $(".dialog-msg-box")[0].scrollHeight >= 0.95)
+                        $(".dialog-msg-box").animate({scrollTop: $(".dialog-msg-box")[0].scrollHeight - $(".dialog-msg-box")[0].clientHeight},
+                            ($(".dialog-msg-box")[0].scrollHeight - $(".dialog-msg-box")[0].scrollTop));
+                }
+            }
+        }
+    };
+    //屏蔽回车换行功能
+    $(".text-area").keydown(function (event) {
+        if (event.keyCode === 13)
+            event.preventDefault()
+    });
+    //回车发送消息  ctrl+回车 换行
+    $(".text-area").keyup(function (event) {
+        if (event.ctrlKey && event.keyCode === 13) {
+            var str = $(".text-area").val();
+            $(".text-area").val(str + "\n");
+        } else if (event.keyCode === 13) {
+            if ($(".text-area").val()) send_msg()
+        }
+        if ($(".text-area").val()) {
+            $(".send-box.send-btn").attr('disabled', false)
+        } else {
+            $(".send-box.send-btn").attr('disabled', true)
+        }
+    });
+    $(".close").click(function (event) {
+        event.stopPropagation();
+        chatsock.send(
+            JSON.stringify({delete: true,delete_name:$(this).parent().find(".name-box.name")[0].textContent})
+        );
+        if ($(this).parent().hasClass('active')) {
+            let next = $(this).parent().next()[0];
+            next.click()
+        }
+        $(this).parent().remove();
+        return false;
+    });
+
+
+    //发送消息
+    function send_msg() {
+        var message = {
+            from_id:{{ request.session.uid }},
+            to_id:{{ current_contact.id }},
+            from_name: "{{ request.session.user_name }}",
+            to_name: "{{ current_contact.name }}",
+            message: $('.text-area').val(),
+
+        };
+        chatsock.send(JSON.stringify(message));
+        $(".text-area").val('').focus();
+        return false;
+    }
+
+    $(".dialog-msg-box").scroll(function () {
+
+        if (this.scrollTop === 0) chatsock.send(
+            JSON.stringify({more_msg: true})
+        );
+        //
+    })
+
+</script>
+</html>

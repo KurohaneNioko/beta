@@ -1,0 +1,293 @@
+{% extends 'base-personal.html' %}
+{% load globalVarConvertor %}
+
+{% block title %}
+  <title>{{ user.name }}的项目</title>
+<style>
+   .layui-body.mt-5{overflow:auto;}
+    .project-container{
+        min-height: 800px;
+        border: 1px solid #eee;
+        margin:auto;
+        width:1200px;
+	overflow:auto;
+        box-sizing: border-box;
+    }
+    .project-header{
+        padding: 20px;
+        border-bottom: 1px solid #e5e9ef;
+        font-size: 18px;
+        color: #222;
+        vertical-align: middle;
+        padding-bottom:10px;
+        box-sizing: border-box;
+    }
+    .project-count{
+        border:1px solid #ddd;
+        border-radius: 3px;
+        color: #777;
+        font-size: 12px;
+        line-height: 18px;
+        height: 20px;
+        margin-left: 11px;
+        padding: 0 5px;
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+    }
+    .project-section{
+        width: 100%;
+    	height:92%;
+	float:left;
+	position:relative;
+    }
+    .project-list{
+        padding: 0 0 20px 0;
+        float: left;
+        display: none;
+        width:100%;
+	overflow:auto;	
+    }
+    .project-list.active{
+        display: block;
+        
+    }
+    .list-item{
+        border: 1px solid rgba(0,0,0,.125);
+        display: inline-block;
+        border-radius: 4px;
+        margin: 19px;
+        padding: 20px;
+        float:left;
+	height:300px;
+        width:30%;
+        box-sizing: border-box;
+        box-shadow: 0 1px 1px 1px rgba(121, 146, 185, .54);
+	position:relative;
+    	clear:top;    
+    }
+    a.title{
+        text-decoration: none;
+        display: inline-block;
+        font-size: 22px;
+        margin-bottom: 10px; 
+        box-sizing: border-box;
+        cursor:pointer;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	width:100%; 
+        white-space: nowrap;
+    }
+    a.title:link,a.title:visited{
+        color:black;    
+    }
+    a.title:hover{
+        color:blue;
+        text-decoration: none;
+    }
+
+    .intro{
+        color: black;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        font-size:16px;
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .detailed-intro{
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+
+        font-size: 16px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        word-wrap: break-word;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+    .label-row{
+        display: block;
+        position: absolute;
+        bottom: 20px;
+	overflow:auto;
+	max-height:100px;
+    }
+    .label{
+        height: 38px;
+        text-align: center;
+        font-size: 12px;
+        vertical-align: middle;
+        border:1px solid black;
+        border-radius: 4px;
+        padding: 10px;
+        margin: 5px;
+        float: left;
+        box-sizing: border-box;
+        cursor:pointer; 
+    }
+    .label.area{
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .label.area:hover{
+        background: #0069d9;
+    }
+    .label.status{
+        background:#ffc107;
+        color: black;
+        border-color: #ffc107;
+    }
+    .label.status:hover{
+        background: #e0a800;
+    }
+    .page-item{
+        display:inline-block;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 4px;
+        border:1px solid #eee;
+        color: #666;
+        padding:0 14px;
+        line-height:30px;
+        cursor:pointer; 
+    }
+    .be-pager{
+    	margin:20px auto;
+    	text-align:center;
+    	float:left;
+    	width:99%; 
+    }
+    .page-count{
+    display:inline-block;
+    height:32px;
+    line-height:30px;
+    margin-left:30px;   
+    color:#99a2aa;
+    font-size:12px; 
+    }
+    .page-elevator{
+    display:inline-block;
+    height:32px;
+    line-height:30px;
+    color:#99a2aa;
+    font-size:12px;     
+    }
+    .current-page{
+    display:inline-block;
+    height:32px;
+    line-height:30px;
+    margin:0 20px;  
+    color:#99a2aa;
+    font-size:12px;     
+    }
+    .page-num{
+    border-radius:4px;
+    margin:0 8px;
+    width:50px;
+    line-height:28px;
+    height:28px;
+    padding:0 10px;
+    border:1px solid #ccd0d7;
+    }
+</style>
+{% endblock %}
+
+{% block page %}
+{%if request.session.uid == user.id%}
+{%set level = 3%}
+{%elif reuqest.session.is_login%}
+{%set level = request.session.level%}
+{%else%}{%set level = 0%}{%endif%}
+<div class="project-container">
+    <div class="project-header">
+       <span>{%if request.session.uid == user.id%} 我的项目{%else%}{{user.name}}的项目{%endif%}</span>
+        <span class="project-count">
+		{{user.my_project.count}}
+	</span>
+    </div>
+    <div class="project-section">
+    	<div class="project-list active">
+		{% for p in user.my_project.all|permission_select:level%}
+			<div class="list-item">
+				<a href="/project_info/{{p.pid}}"  class="title">{{p.name}}</a>
+				<div class="intro">简介/标签:{{p.introduction}}</div>
+				<div class="detailed-intro">{{p.detailed_introduction}}</div>
+				<div class="label-row">
+					<div class="label status">
+						<span>{{p.status|status2str}}</span>
+					</div>
+					{%for a in p.area|area2list%}
+					<div class="label area">
+						<span>{{a}}</span>
+					</div>
+					{%endfor%}
+				</div>
+			</div>
+	{% if forloop.last%}</div>
+	{%elif forloop.counter|divisibleby:6%}</div><div class="project-list">{%endif%}
+		{%empty%} {%if request.session.uid == user.id%} 你还没有项目，快去创建吧~{%else%}Ta还没有项目,或你的权限不足{%endif%}
+		{%endfor%}
+	{%if user.my_project.all|permission_select:level|length > 6%}
+		<div class='be-pager'>
+			<li class='page-item'>上一页</li>
+			<span class='current-page'>第1页</span>
+			<li class='page-item'>下一页</li>
+			<span class='page-count'></span>
+			<span class='page-elevator'>,跳至<input class='page-num' type='text'>页</span>
+		</div>
+	{%endif%}
+    </div>
+</div>
+{% endblock %}
+{%block jsss%}
+{%if request.session.uid == user.id%}
+{%set level = 3%}
+{%elif reuqest.session.is_login%}
+{%set level = request.session.level%}
+{%else%}{%set level = 0%}{%endif%}
+<script>
+
+var count = Math.ceil({{user.my_project.all|permission_select:level|length}}/6)
+$(".page-count").text("共"+count+"页")
+$(".page-item").click(function(event){
+	if (this.textContent=="上一页"){
+		let tmp = $(".project-list.active").prev();
+		if(tmp.hasClass('project-list')){
+			tmp.addClass('active');
+			tmp.siblings().removeClass('active');
+			$('.current-page').text("第"+(parseInt($('.current-page').text().slice(1,-1))-1)+"页")
+		}
+	}
+	else{
+		let tmp = $(".project-list.active").next();
+		if(tmp.hasClass('project-list')){
+			tmp.addClass('active');
+			tmp.siblings().removeClass('active');
+			$('.current-page').text("第"+(parseInt($('.current-page').text().slice(1,-1))+1)+"页")
+		}	
+	}
+}
+)
+$(".page-num").keyup(function(event){
+	if(event.keyCode === 13) {
+		let page = parseInt($(".page-num").val());
+		if(!isNaN(page)){
+		$(".page-num").val("");
+			if(page>=count) page=count;
+			else if (page<=0)page=1;
+			let tmp = $(".project-list")[page-1];
+			$(tmp).addClass('active');
+			$(tmp).siblings().removeClass('active');
+			$('.current-page').text("第"+page+"页")
+		}		
+	}
+}
+)
+</script>
+{%endblock%}
+
