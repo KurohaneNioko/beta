@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 {% load static %}
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>我的消息</title>
-</head>
-<link rel="stylesheet" href={% static 'message/css4Msg.css' %}   type="text/css">
 
-<body>
+{% block title %}
+<title>我的消息</title>
+{% endblock %}
+
+{% block addCSS %}
+<link rel="stylesheet" href={% static 'message/css4Msg.css' %}   type="text/css">
+{% endblock %}
+
+{% block page %}
 <div class="msg-container">
     <div class="contacts-list">
         <div class="contacts-list-title">
@@ -41,8 +43,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-</body>
+{% block addJS %}
 <script src={% static 'jquery-3.4.0.js' %}></script>
 <script src={% static 'message/reconnecting-websocket.min.js' %}></script>
 <script>
@@ -240,4 +243,4 @@
     })
 
 </script>
-</html>
+{% endblock %}
