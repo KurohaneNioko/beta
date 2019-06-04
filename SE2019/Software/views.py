@@ -493,7 +493,7 @@ def file_iterator(file_name, chunk_size=1024):
 
 def file_download(request):  # 用于文件下载
     if not request.session.get('is_login'):
-        return redirect('Index')
+        return redirect('IndexV2')
     if request.method == 'GET':
         filepath = request.GET['filepath']
         filename = filepath.split('\\')[-1]
