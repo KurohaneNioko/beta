@@ -452,7 +452,7 @@ def project_info(request, pid):
 
 
 def favlist(request, uid):
-    #try:
+    try:
         user = User.objects.get(id=uid)
         count_of_new_dynamic = 0
         level = 0
@@ -477,7 +477,7 @@ def favlist(request, uid):
             projects = user.favorite_projects.filter(security_level__lte=level)
             
         return render(request, 'favlist.html', {'user': user, 'count_of_new_dynamic':count_of_new_dynamic,'projects':projects})
-    #except:
+    except:
         return render(request, 'confirm.html', {'title': '错误', 'message': '用户不存在'})
 
 
@@ -493,7 +493,7 @@ def file_iterator(file_name, chunk_size=1024):
 
 def file_download(request):  # 用于文件下载
     if not request.session.get('is_login'):
-        return redirect('IndexV2')
+        return render(request, 'confirm.html', {'title': '错误', 'message': '请登录'})
     if request.method == 'GET':
         filepath = request.GET['filepath']
         filename = filepath.split('\\')[-1]
